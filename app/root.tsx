@@ -7,11 +7,11 @@ import { theme } from './theme/src/index'
 export const meta: MetaFunction = () => [
   { charset: 'utf-8' },
   { viewport: 'width=device-width, initial-scale=1.0' },
-  { title: 'Chat with Searchables' },
-  { name: 'description', content: 'Demo app for chatting with LLM and get automatically web search as references' },
+  { title: 'App Template' },
+  { name: 'description', content: 'Remix and Chakra UI out-of-the-box template' },
 ]
 
-function Document({ children, title = 'App title' }: { children: React.ReactNode; title?: string }) {
+function Document({ children, title = 'App Name' }: { children: React.ReactNode; title?: string }) {
   return (
     <html lang="en">
       <head>
