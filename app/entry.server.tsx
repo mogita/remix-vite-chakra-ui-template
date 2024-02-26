@@ -1,6 +1,4 @@
 import { PassThrough } from 'node:stream'
-import { installGlobals } from '@remix-run/node'
-installGlobals()
 
 import type { AppLoadContext, EntryContext } from '@remix-run/node'
 import { RemixServer } from '@remix-run/react'

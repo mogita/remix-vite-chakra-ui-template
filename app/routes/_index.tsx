@@ -6,5 +6,5 @@ export const meta: MetaFunction = () => {
 }
 
 export default function Index() {
-  return <Flex>Hello Chakra UI</Flex>
+  return <Flex>Hello Remix with Chakra UI and Vite!</Flex>
 }
