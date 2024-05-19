@@ -14,13 +14,6 @@ import { ChakraProvider, Box, Heading, extendTheme, cookieStorageManagerSSR, Tex
 import { ServerStyleContext } from './context'
 
 export const meta: MetaFunction = () => [
-  {
-    charset: 'utf-8',
-  },
-  {
-    name: 'viewport',
-    content: 'width=device-width, initial-scale=1',
-  },
   { title: 'App Template' },
   { name: 'description', content: 'Remix v2 and Chakra UI v2 out-of-the-box template' },
 ]
@@ -79,6 +72,8 @@ function Document({ children, title = 'App title' }: DocumentProps) {
       })}
     >
       <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <title>{title}</title>
         <Links />
