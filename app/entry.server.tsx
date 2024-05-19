@@ -1,48 +1,27 @@
-import { PassThrough } from 'node:stream'
-
-import type { AppLoadContext, EntryContext } from '@remix-run/node'
-import { RemixServer } from '@remix-run/react'
-import * as isbotModule from 'isbot'
-import { renderToPipeableStream } from 'react-dom/server'
+import { PassThrough } from 'stream'
 
 import createEmotionCache from '@emotion/cache'
-import createEmotionServer from '@emotion/server/create-instance'
 import { CacheProvider as EmotionCacheProvider } from '@emotion/react'
+import createEmotionServer from '@emotion/server/create-instance'
+import { type AppLoadContext, type EntryContext } from '@remix-run/node'
+import { Response } from '@remix-run/web-fetch'
+import { RemixServer } from '@remix-run/react'
+import { isbot } from 'isbot'
+import { renderToPipeableStream } from 'react-dom/server'
 
-const ABORT_DELAY = 5_000
+const ABORT_DELAY = 5000
 
-export default function handleRequest(
+const handleRequest = (
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
   remixContext: EntryContext,
   loadContext: AppLoadContext,
-) {
-  return isBotRequest(request.headers.get('user-agent'))
+) =>
+  isbot(request.headers.get('user-agent'))
     ? handleBotRequest(request, responseStatusCode, responseHeaders, remixContext)
     : handleBrowserRequest(request, responseStatusCode, responseHeaders, remixContext)
-}
-
-// We have some Remix apps in the wild already running with isbot@3 so we need
-// to maintain backwards compatibility even though we want new apps to use
-// isbot@4.  That way, we can ship this as a minor Semver update to @remix-run/dev.
-function isBotRequest(userAgent: string | null) {
-  if (!userAgent) {
-    return false
-  }
-
-  // isbot >= 3.8.0, >4
-  if ('isbot' in isbotModule && typeof isbotModule.isbot === 'function') {
-    return isbotModule.isbot(userAgent)
-  }
-
-  // isbot < 3.8.0
-  if ('default' in isbotModule && typeof isbotModule.default === 'function') {
-    return isbotModule.default(userAgent)
-  }
-
-  return false
-}
+export default handleRequest
 
 const handleBotRequest = (
   request: Request,
@@ -68,9 +47,16 @@ const handleBotRequest = (
 
           responseHeaders.set('Content-Type', 'text/html')
 
+          const readableStream = new ReadableStream({
+            start(controller) {
+              bodyWithStyles.on('data', (chunk) => controller.enqueue(chunk))
+              bodyWithStyles.on('end', () => controller.close())
+              bodyWithStyles.on('error', (err) => controller.error(err))
+            },
+          })
+
           resolve(
-            // @ts-ignore
-            new Response(bodyWithStyles, {
+            new Response(readableStream, {
               headers: responseHeaders,
               status: didError ? 500 : responseStatusCode,
             }),
@@ -115,9 +101,16 @@ const handleBrowserRequest = (
 
           responseHeaders.set('Content-Type', 'text/html')
 
+          const readableStream = new ReadableStream({
+            start(controller) {
+              bodyWithStyles.on('data', (chunk) => controller.enqueue(chunk))
+              bodyWithStyles.on('end', () => controller.close())
+              bodyWithStyles.on('error', (err) => controller.error(err))
+            },
+          })
+
           resolve(
-            // @ts-ignore
-            new Response(bodyWithStyles, {
+            new Response(readableStream, {
               headers: responseHeaders,
               status: didError ? 500 : responseStatusCode,
             }),

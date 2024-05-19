@@ -10,12 +10,17 @@ import {
   useLoaderData,
   useRouteError,
 } from '@remix-run/react'
-import { ChakraProvider, extendTheme, Box, Heading, Text, Code, cookieStorageManagerSSR } from '@chakra-ui/react'
+import { ChakraProvider, Box, Heading, extendTheme, cookieStorageManagerSSR, Text, Code } from '@chakra-ui/react'
 import { ServerStyleContext } from './context'
 
 export const meta: MetaFunction = () => [
-  { charset: 'utf-8' },
-  { viewport: 'width=device-width, initial-scale=1.0' },
+  {
+    charset: 'utf-8',
+  },
+  {
+    name: 'viewport',
+    content: 'width=device-width, initial-scale=1',
+  },
   { title: 'App Template' },
   { name: 'description', content: 'Remix v2 and Chakra UI v2 out-of-the-box template' },
 ]
@@ -42,10 +47,11 @@ interface DocumentProps {
   title?: string
 }
 
-function Document({ children, title = 'App Name' }: DocumentProps) {
+function Document({ children, title = 'App title' }: DocumentProps) {
   function getColorMode(cookies: string) {
+    if (!cookies) return void 0
     const match = cookies.match(new RegExp(`(^| )${CHAKRA_COOKIE_COLOR_KEY}=([^;]+)`))
-    return match == null ? void 0 : match[2]
+    return !Array.isArray(match) ? void 0 : match[2]
   }
 
   let cookies = useLoaderData<typeof loader>()
@@ -103,7 +109,6 @@ export default function App() {
   )
 }
 
-// How ChakraProvider should be used on ErrorBoundary
 export function ErrorBoundary() {
   const error = useRouteError()
 
@@ -125,14 +130,16 @@ export function ErrorBoundary() {
       <Document title="Error!">
         <ChakraProvider>
           <Box>
-            <Heading as="h1" bg="red.500">
+            <Heading p={2} as="h1" bg="red.500">
               Error
             </Heading>
-            <Text>{error.message}</Text>
-            <Heading as="h2" bg="red.500">
+            <Text p={4}>{error.message}</Text>
+            <Heading p={2} as="h2" size="sm" bg="red.500">
               Stack trace:
             </Heading>
-            <Code>{error.stack}</Code>
+            <Code w="full" p={4}>
+              <pre>{error.stack}</pre>
+            </Code>
           </Box>
         </ChakraProvider>
       </Document>
