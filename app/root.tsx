@@ -70,6 +70,9 @@ function Document({ children, title = 'App title' }: DocumentProps) {
         'data-theme': colorMode,
         style: { colorScheme: colorMode },
       })}
+      // TODO: a better solution than the hacky thing?
+      // https://github.com/chakra-ui/chakra-ui/issues/7040
+      suppressHydrationWarning
     >
       <head>
         <meta charSet="utf-8" />
