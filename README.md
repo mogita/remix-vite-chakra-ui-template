@@ -9,7 +9,7 @@ npx create-remix@latest --template mogita/remix-vite-chakra-ui-template
 What's included:
 
 - [Remix v2](https://remix.run)
-- [Vite 5](https://vitejs.dev)
+- [Vite 6](https://vitejs.dev)
 - [Chakra UI v2](https://chakra-ui.com)
 - [React Icons v5](https://react-icons.github.io/react-icons/)
 - Auto Dark/Light theme (with white flash prevention)
