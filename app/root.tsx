@@ -78,7 +78,6 @@ function Document({ children, title = 'App title' }: DocumentProps) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
-        <title>{title}</title>
         <Links />
         {serverStyleData?.map(({ key, ids, css }) => (
           <style key={key} data-emotion={`${key} ${ids.join(' ')}`} dangerouslySetInnerHTML={{ __html: css }} />
